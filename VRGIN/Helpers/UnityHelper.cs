@@ -1,4 +1,6 @@
-﻿using System;
+﻿using ColossalFramework;
+using ColossalFramework.Plugins;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -170,7 +172,8 @@ namespace VRGIN.Helpers
         /// <returns></returns>
         public static Texture2D LoadImage(string filePath)
         {
-            string ovrDirectory = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "Images");
+            string modPath = Singleton<PluginManager>.instance.FindPluginInfo(Assembly.GetExecutingAssembly()).modPath;
+            string ovrDirectory = Path.Combine(modPath, "Images");
             filePath = Path.Combine(ovrDirectory, filePath);
 
             Texture2D tex = null;

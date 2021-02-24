@@ -265,6 +265,8 @@ namespace VRGIN.Core
                     targetCamera.layerCullSpherical = Blueprint.layerCullSpherical;
                     targetCamera.useOcclusionCulling = Blueprint.useOcclusionCulling;
                     targetCamera.hdr = false;
+                    targetCamera.tag = Blueprint.tag;
+                    Blueprint.tag = Blueprint.tag + "_old";
 
                     targetCamera.backgroundColor = Blueprint.backgroundColor;
 
@@ -296,7 +298,7 @@ namespace VRGIN.Core
                     //StartCoroutine(ExecuteDelayed(delegate { CopyFX(Blueprint); }));
                     //CopyFX(Blueprint);
 
-                    blueprint.gameObject.AddComponent<CameraKiller>();
+                    //blueprint.gameObject.AddComponent<CameraKiller>();
                     //blueprint.enabled = false;
                     //blueprint.nearClipPlane = Blueprint.farClipPlane = 0;
 
@@ -421,6 +423,83 @@ namespace VRGIN.Core
         {
             CopyFX(Blueprint);
         }
+
+        //protected override void OnLateUpdate()
+        //{
+        //    base.OnLateUpdate();
+
+        //    Camera steamCamera = SteamCam.GetComponent<Camera>();
+        //    steamCamera
+        //}
+
+    //    private void UpdateCSLCameraInfo(Camera targetCamera)
+    //    {
+    //         Transform transform = targetCamera.transform;
+    //float num1 = targetCamera.fieldOfView * 0.5f;
+    //float b1 = (float) targetCamera.pixelWidth / (float) targetCamera.pixelHeight;
+    //float num2 = b1 //TODO Mathf.Max(this.m_requiredAspect, b1);
+    //float near = targetCamera.nearClipPlane;
+    //float far = targetCamera.farClipPlane;
+    //float height = targetCamera.transform.position.y; //TODO fix this
+    //Quaternion rotation = transform.rotation;
+    //Vector3 position = transform.position;
+    //Vector3 forward = transform.forward;
+    //Vector3 right = transform.right;
+    //Vector3 up = transform.up;
+    //Vector3 vector3_1 = right * (Mathf.Tan(num1 * ((float) Math.PI / 180f)) * num2);
+    //Vector3 vector3_2 = right * (Mathf.Tan(num1 * ((float) Math.PI / 180f)) * b1);
+    //Vector3 vector3_3 = up * Mathf.Tan(num1 * ((float) Math.PI / 180f));
+    //var directionA = forward + vector3_3 - vector3_1;
+    //var directionB = forward + vector3_3 + vector3_1;
+    //var directionC = forward - vector3_3 + vector3_1;
+    //var directionD = forward - vector3_3 - vector3_1;
+    //Vector3 vector3_4 = position + directionA * near;
+    //Vector3 vector3_5 = position + directionB * near;
+    //Vector3 vector3_6 = position + directionC * near;
+    //Vector3 vector3_7 = position + directionD * near;
+    //Vector3 vector3_8 = position + directionA * far;
+    //Vector3 vector3_9 = position + directionB * far;
+    //Vector3 vector3_10 = position + directionC * far;
+    //Vector3 vector3_11 = position + directionD * far;
+    //var planeA = new Plane(vector3_8, vector3_4, vector3_9);
+    //var planeB = new Plane(vector3_9, vector3_5, vector3_10);
+    //var planeC = new Plane(vector3_10, vector3_6, vector3_11);
+    //var planeD = new Plane(vector3_11, vector3_7, vector3_8);
+    //var planeE = new Plane(vector3_5, vector3_4, vector3_6);
+    //var planeF = new Plane(vector3_9, vector3_10, vector3_8);
+    //Bounds bounds = new Bounds();
+    //Bounds nearBounds = new Bounds();
+    //bounds.SetMinMax(Vector3.Min(Vector3.Min(Vector3.Min(vector3_4, vector3_5), Vector3.Min(vector3_6, vector3_7)), Vector3.Min(Vector3.Min(vector3_8, vector3_9), Vector3.Min(vector3_10, vector3_11))), Vector3.Max(Vector3.Max(Vector3.Max(vector3_4, vector3_5), Vector3.Max(vector3_6, vector3_7)), Vector3.Max(Vector3.Max(vector3_8, vector3_9), Vector3.Max(vector3_10, vector3_11))));
+    //nearBounds.SetMinMax(Vector3.Min(Vector3.Min(Vector3.Min(vector3_4, vector3_5), Vector3.Min(vector3_6, vector3_7)), position), Vector3.Max(Vector3.Max(Vector3.Max(vector3_4, vector3_5), Vector3.Max(vector3_6, vector3_7)), position));
+    //SimulationManager.ViewData viewData;
+    //viewData.m_position = position;
+    //viewData.m_direction = forward;
+    //  viewData.m_planeA = planeA;
+    //  viewData.m_planeB = planeB;
+    //  viewData.m_planeC = planeC;
+    //  viewData.m_planeD = planeD;
+    //  viewData.m_planeE = planeE;
+    //  viewData.m_planeF = planeF;
+    //Vector3 forward2 = Vector3.down;
+    //Color linear = RenderSettings.ambientSkyColor.linear;
+    //if ((UnityEngine.Object) this.m_mainLight != (UnityEngine.Object) null)
+    //{
+    //  forward2 = this.m_mainLight.transform.forward;
+    //  this.m_cameraInfo.m_shadowRotation = Quaternion.LookRotation(forward2);
+    //  this.m_cameraInfo.m_shadowOffset = forward2 * this.m_shadowDistance;
+    //  linear.a = this.m_mainLight.shadowStrength;
+    //}
+    //Shader.SetGlobalVector("_CameraRight", (Vector4) this.m_cameraInfo.m_right);
+    //Shader.SetGlobalVector("_CameraUp", (Vector4) this.m_cameraInfo.m_up);
+    //Shader.SetGlobalVector("_CameraForward", (Vector4) forward);
+    //Shader.SetGlobalVector("_ViewportRight", (Vector4) vector3_2);
+    //Shader.SetGlobalVector("_ViewportUp", (Vector4) vector3_3);
+    //Shader.SetGlobalVector("_ViewportForward", (Vector4) forward);
+    //Shader.SetGlobalVector("_ShadowRight", (Vector4) (this.m_cameraInfo.m_shadowRotation * Vector3.right));
+    //Shader.SetGlobalVector("_ShadowUp", (Vector4) (this.m_cameraInfo.m_shadowRotation * Vector3.up));
+    //Shader.SetGlobalVector("_ShadowForward", (Vector4) forward2);
+    //Shader.SetGlobalColor("_AmbientColor", linear);
+    //    }
 
         internal Camera Clone(bool copyEffects = true)
         {

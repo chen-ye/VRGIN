@@ -178,7 +178,7 @@ public class SteamVR_Render : MonoBehaviour
 
                 // Hack to flush render event that was queued in Update (this ensures WaitGetPoses has returned before we grab the new values).
                 SteamVR.Unity.EventWriteString("[UnityMain] GetNativeTexturePtr - Begin");
-                SteamVR_Camera.GetSceneTexture(cameras[0].GetComponent<Camera>().hdr).GetNativeTexturePtr();
+				SteamVR_Camera.GetSceneTexture(cameras[0].GetComponent<Camera>().hdr).GetNativeTexturePtr();
                 SteamVR.Unity.EventWriteString("[UnityMain] GetNativeTexturePtr - End");
 
                 compositor.GetLastPoses(poses, gamePoses);
