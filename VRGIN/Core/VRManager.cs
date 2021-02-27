@@ -71,7 +71,7 @@ namespace VRGIN.Core
         private HashSet<Camera> _CheckedCameras = new HashSet<Camera>();
 
         /// <summary>
-        /// Creates the manager with a context and an interpeter.
+        /// Creates the manager with a context and an interpreter.
         /// </summary>
         /// <typeparam name="T">The interpreter that keeps track of actors and cameras, etc.</typeparam>
         /// <param name="context">The context of the game (materials, layers, settings...)</param>
@@ -85,7 +85,7 @@ namespace VRGIN.Core
                 _Instance = new GameObject("VRGIN_Manager").AddComponent<VRManager>();
                 _Instance.Context = context;
                 _Instance.Interpreter = _Instance.gameObject.AddComponent<T>();
-                // Makes sure that the GUI is instanciated
+                // Makes sure that the GUI is instantiated
                 _Instance._Gui = VRGUI.Instance;
                 _Instance.Input = new InputSimulator();
 

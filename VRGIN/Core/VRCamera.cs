@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using ColossalFramework;
 using UnityEngine;
 using VRGIN.Helpers;
 
@@ -204,7 +205,15 @@ namespace VRGIN.Core
             {
                 if (_Instance == null)
                 {
+
                     _Instance = new GameObject("VRGIN_Camera").AddComponent<AudioListener>().gameObject.AddComponent<VRCamera>();
+                    //GameObject mainCameraGameObject = GameObject.FindGameObjectWithTag("MainCamera");
+                    //if (!mainCameraGameObject)
+                    //{
+                    //    VRLog.Error("Cannot find main camera.");
+                    //    return null;
+                    //}
+                    //_Instance = mainCameraGameObject.AddComponent<VRCamera>();
                 }
                 return _Instance;
             }
@@ -213,7 +222,8 @@ namespace VRGIN.Core
         protected override void OnAwake()
         {
             VRLog.Info("Creating VR Camera");
-            _Camera = gameObject.AddComponent<Camera>();
+            Camera camera = gameObject.GetComponent<Camera>();
+            _Camera = camera ?? gameObject.AddComponent<Camera>();
             gameObject.AddComponent<SteamVR_Camera>();
             SteamCam = GetComponent<SteamVR_Camera>();
             SteamCam.Expand(); // Expand immediately!
@@ -242,6 +252,19 @@ namespace VRGIN.Core
         {
             VRLog.Info("Copying camera: {0}", blueprint ? blueprint.name : "NULL");
 
+            if (blueprint == _Camera)
+            {
+                VRLog.Info("Skipping, this is the camera");
+                return;
+            }
+
+            //if (master)
+            //{
+            //    VRLog.Info("we should be skipping this too (I am:" + _Camera.name);
+            //    _Camera.hdr = false;
+            //    return;
+            //}
+
             if (blueprint && blueprint.GetComponent<CameraSlave>())
             {
                 VRLog.Warn("Is already slave -- NOOP");
@@ -255,7 +278,7 @@ namespace VRGIN.Core
                 // Apply to both the head camera and the VR camera
                 ApplyToCameras(targetCamera =>
                 {
-                    targetCamera.nearClipPlane = VR.Context.NearClipPlane;
+                    targetCamera.nearClipPlane = Blueprint.nearClipPlane;//VR.Context.NearClipPlane;
                     targetCamera.farClipPlane = Mathf.Max(Blueprint.farClipPlane, MIN_FAR_CLIP_PLANE);
                     targetCamera.clearFlags = Blueprint.clearFlags == CameraClearFlags.Skybox ? CameraClearFlags.Skybox : CameraClearFlags.SolidColor;
                     targetCamera.renderingPath = Blueprint.renderingPath;
@@ -339,6 +362,8 @@ namespace VRGIN.Core
             // Remove layers that are captured by other cameras (see VRGUI)
             cullingMask |= VR.Interpreter.DefaultCullingMask;
             cullingMask &= ~(LayerMask.GetMask(VR.Context.UILayer, VR.Context.InvisibleLayer));
+
+            //cullingMask = ~0;
             cullingMask &= ~(VR.Context.IgnoreMask);
 
             VRLog.Info("The camera sees {0} ({1})", string.Join(", ", UnityHelper.GetLayerNames(cullingMask)), string.Join(", ", Slaves.Select(s => s.name).ToArray()));
@@ -423,83 +448,6 @@ namespace VRGIN.Core
         {
             CopyFX(Blueprint);
         }
-
-        //protected override void OnLateUpdate()
-        //{
-        //    base.OnLateUpdate();
-
-        //    Camera steamCamera = SteamCam.GetComponent<Camera>();
-        //    steamCamera
-        //}
-
-    //    private void UpdateCSLCameraInfo(Camera targetCamera)
-    //    {
-    //         Transform transform = targetCamera.transform;
-    //float num1 = targetCamera.fieldOfView * 0.5f;
-    //float b1 = (float) targetCamera.pixelWidth / (float) targetCamera.pixelHeight;
-    //float num2 = b1 //TODO Mathf.Max(this.m_requiredAspect, b1);
-    //float near = targetCamera.nearClipPlane;
-    //float far = targetCamera.farClipPlane;
-    //float height = targetCamera.transform.position.y; //TODO fix this
-    //Quaternion rotation = transform.rotation;
-    //Vector3 position = transform.position;
-    //Vector3 forward = transform.forward;
-    //Vector3 right = transform.right;
-    //Vector3 up = transform.up;
-    //Vector3 vector3_1 = right * (Mathf.Tan(num1 * ((float) Math.PI / 180f)) * num2);
-    //Vector3 vector3_2 = right * (Mathf.Tan(num1 * ((float) Math.PI / 180f)) * b1);
-    //Vector3 vector3_3 = up * Mathf.Tan(num1 * ((float) Math.PI / 180f));
-    //var directionA = forward + vector3_3 - vector3_1;
-    //var directionB = forward + vector3_3 + vector3_1;
-    //var directionC = forward - vector3_3 + vector3_1;
-    //var directionD = forward - vector3_3 - vector3_1;
-    //Vector3 vector3_4 = position + directionA * near;
-    //Vector3 vector3_5 = position + directionB * near;
-    //Vector3 vector3_6 = position + directionC * near;
-    //Vector3 vector3_7 = position + directionD * near;
-    //Vector3 vector3_8 = position + directionA * far;
-    //Vector3 vector3_9 = position + directionB * far;
-    //Vector3 vector3_10 = position + directionC * far;
-    //Vector3 vector3_11 = position + directionD * far;
-    //var planeA = new Plane(vector3_8, vector3_4, vector3_9);
-    //var planeB = new Plane(vector3_9, vector3_5, vector3_10);
-    //var planeC = new Plane(vector3_10, vector3_6, vector3_11);
-    //var planeD = new Plane(vector3_11, vector3_7, vector3_8);
-    //var planeE = new Plane(vector3_5, vector3_4, vector3_6);
-    //var planeF = new Plane(vector3_9, vector3_10, vector3_8);
-    //Bounds bounds = new Bounds();
-    //Bounds nearBounds = new Bounds();
-    //bounds.SetMinMax(Vector3.Min(Vector3.Min(Vector3.Min(vector3_4, vector3_5), Vector3.Min(vector3_6, vector3_7)), Vector3.Min(Vector3.Min(vector3_8, vector3_9), Vector3.Min(vector3_10, vector3_11))), Vector3.Max(Vector3.Max(Vector3.Max(vector3_4, vector3_5), Vector3.Max(vector3_6, vector3_7)), Vector3.Max(Vector3.Max(vector3_8, vector3_9), Vector3.Max(vector3_10, vector3_11))));
-    //nearBounds.SetMinMax(Vector3.Min(Vector3.Min(Vector3.Min(vector3_4, vector3_5), Vector3.Min(vector3_6, vector3_7)), position), Vector3.Max(Vector3.Max(Vector3.Max(vector3_4, vector3_5), Vector3.Max(vector3_6, vector3_7)), position));
-    //SimulationManager.ViewData viewData;
-    //viewData.m_position = position;
-    //viewData.m_direction = forward;
-    //  viewData.m_planeA = planeA;
-    //  viewData.m_planeB = planeB;
-    //  viewData.m_planeC = planeC;
-    //  viewData.m_planeD = planeD;
-    //  viewData.m_planeE = planeE;
-    //  viewData.m_planeF = planeF;
-    //Vector3 forward2 = Vector3.down;
-    //Color linear = RenderSettings.ambientSkyColor.linear;
-    //if ((UnityEngine.Object) this.m_mainLight != (UnityEngine.Object) null)
-    //{
-    //  forward2 = this.m_mainLight.transform.forward;
-    //  this.m_cameraInfo.m_shadowRotation = Quaternion.LookRotation(forward2);
-    //  this.m_cameraInfo.m_shadowOffset = forward2 * this.m_shadowDistance;
-    //  linear.a = this.m_mainLight.shadowStrength;
-    //}
-    //Shader.SetGlobalVector("_CameraRight", (Vector4) this.m_cameraInfo.m_right);
-    //Shader.SetGlobalVector("_CameraUp", (Vector4) this.m_cameraInfo.m_up);
-    //Shader.SetGlobalVector("_CameraForward", (Vector4) forward);
-    //Shader.SetGlobalVector("_ViewportRight", (Vector4) vector3_2);
-    //Shader.SetGlobalVector("_ViewportUp", (Vector4) vector3_3);
-    //Shader.SetGlobalVector("_ViewportForward", (Vector4) forward);
-    //Shader.SetGlobalVector("_ShadowRight", (Vector4) (this.m_cameraInfo.m_shadowRotation * Vector3.right));
-    //Shader.SetGlobalVector("_ShadowUp", (Vector4) (this.m_cameraInfo.m_shadowRotation * Vector3.up));
-    //Shader.SetGlobalVector("_ShadowForward", (Vector4) forward2);
-    //Shader.SetGlobalColor("_AmbientColor", linear);
-    //    }
 
         internal Camera Clone(bool copyEffects = true)
         {
