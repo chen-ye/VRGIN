@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using ColossalFramework;
 using UnityEngine;
+using UnityEngine.Rendering;
 using VRGIN.Helpers;
 
 namespace VRGIN.Core
@@ -288,8 +289,7 @@ namespace VRGIN.Core
                     targetCamera.layerCullSpherical = Blueprint.layerCullSpherical;
                     targetCamera.useOcclusionCulling = Blueprint.useOcclusionCulling;
                     targetCamera.hdr = false;
-                    targetCamera.tag = Blueprint.tag;
-                    Blueprint.tag = Blueprint.tag + "_old";
+                    targetCamera.opaqueSortMode = OpaqueSortMode.Default;
 
                     targetCamera.backgroundColor = Blueprint.backgroundColor;
 
